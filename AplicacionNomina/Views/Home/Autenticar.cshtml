@@ -1,0 +1,118 @@
+@{
+    ViewBag.Title = "Autenticar";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Login - Aplicaci�n N�mina</title>
+    <link rel="stylesheet" href="~/Content/css/Login.css" />
+    <style>
+        .login-card {
+            background: #fff;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+            max-width: 400px;
+            margin: 60px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .login-card h2 {
+                margin-bottom: 1.5rem;
+                color: #2980b9;
+                font-weight: 700;
+                letter-spacing: 1px;
+            }
+
+            .login-card .input-group {
+                width: 100%;
+                margin-bottom: 1.2rem;
+            }
+
+            .login-card label {
+                display: block;
+                margin-bottom: 0.4rem;
+                color: #34495e;
+                font-size: 1rem;
+            }
+
+            .login-card input {
+                width: 100%;
+                padding: 0.7rem;
+                border: 1px solid #b2bec3;
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: border-color 0.2s;
+            }
+
+                .login-card input:focus {
+                    border-color: #2980b9;
+                    outline: none;
+                }
+
+            .login-card .login-btn {
+                width: 100%;
+                padding: 0.8rem;
+                background: linear-gradient(90deg, #2980b9 60%, #6dd5fa 100%);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s;
+                margin-top: 1rem;
+                box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
+            }
+
+                .login-card .login-btn:hover {
+                    background: linear-gradient(90deg, #2574a9 60%, #60a3bc 100%);
+                }
+
+            .login-card .alert {
+                width: 100%;
+                margin-bottom: 1rem;
+                padding: 0.7rem;
+                border-radius: 6px;
+                background: #ffdddd;
+                color: #c0392b;
+                border: 1px solid #e74c3c;
+                text-align: center;
+            }
+
+        body {
+            background: linear-gradient(120deg, #2980b9, #6dd5fa, #ffffff);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Iniciar sesi�n</h2>
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert">@ViewBag.Error</div>
+        }
+        @using (Html.BeginForm("Autenticar", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="input-group">
+                <label for="Usuario">Usuario</label>
+                <input type="text" id="Usuario" name="Usuario" required autocomplete="username" />
+            </div>
+            <div class="input-group">
+                <label for="Clave">Contrase�a</label>
+                <input type="password" id="Clave" name="Clave" required autocomplete="current-password" />
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+﻿@model AplicacionNomina.Models.RegistroVM
+@{
+    ViewBag.Title = "Create your account";
+}
+
+<div class="row" style="min-height:75vh; align-items:center;">
+    <!-- Columna izquierda (ilustración) -->
+    <div class="col-md-6 mb-4">
+        <div style="
+            background: url('/Content/img/registro-bg.jpg') center/cover no-repeat;
+            border-radius:16px; min-height:420px;">
+        </div>
+    </div>
+
+    <!-- Columna derecha (formulario) -->
+    <div class="col-md-6">
+        <div class="card p-4 shadow-sm" style="border-radius:16px; max-width:520px;">
+            <h2 class="text-center mb-1">Welcome to <strong>XMART</strong></h2>
+            <p class="text-center text-muted mb-4">You will need to authenticate to continue working</p>
+            <h4 class="mb-3">Create your account</h4>
+
+            @using (Html.BeginForm("Registro", "Home", FormMethod.Post, new { @class = "mt-2" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Nombre)
+                    @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Name" })
+                    @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Apellido)
+                    @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Lastname" })
+                    @Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Email" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Clave, "Password")
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Clave, new { @class = "form-control", type = "password", id = "pwd" })
+                        <button type="button" class="btn btn-outline-secondary" id="togglePwd" title="Mostrar/Ocultar">👁</button>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Clave, "", new { @class = "text-danger" })
+                </div>
+
+                <button class="btn btn-danger w-100 mb-2" type="submit">Create account</button>
+
+                <div class="text-center">
+                    <small>Already have an account?
+                        @Html.ActionLink("Sign in", "Autenticar", "Home")
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        (function () {
+            var btn = document.getElementById('togglePwd');
+            var pwd = document.getElementById('pwd');
+            if (btn && pwd) {
+                btn.addEventListener('click', function () {
+                    pwd.type = (pwd.type === 'password') ? 'text' : 'password';
+                });
+            }
+        })();
+    </script>
+}
