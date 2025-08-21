@@ -31,5 +31,12 @@ namespace AplicacionNomina.Controllers
             ViewBag.Message = "Your contact page.";
             return View();
         }
+
+        [HttpGet]
+        public ActionResult Registrar()
+        {
+            ViewBag.Message = "Your contact page.";
+            return View();
+        }
     }
 }
