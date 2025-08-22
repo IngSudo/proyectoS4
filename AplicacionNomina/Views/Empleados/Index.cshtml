@@ -10,16 +10,30 @@
     <div class="alert alert-success">@TempData["ok"]</div>
 }
 
-<form method="get" class="form-inline mb-3">
-    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control me-2"
-           placeholder="Buscar por nombre, apellido o cédula" />
+<form method="get" class="row mb-3">
+    <!-- Columna búsqueda + botones -->
+    <div class="col-md-8">
+        <div class="input-group">
+            <input type="text" name="q" value="@ViewBag.Busqueda"
+                   class="form-control"
+                   placeholder="Buscar por nombre, apellido o cédula" />
 
-    <button type="submit" class="btn btn-primary me-2">Buscar</button>
+            <button type="submit" class="btn btn-primary">Buscar</button>
 
-    <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Limpiar</a>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm">
+                Limpiar
+            </a>
+        </div>
+    </div>
 
-    <a href="@Url.Action("Create")" class="btn btn-success">Crear empleado</a>
+    <!-- Columna botón crear -->
+    <div class="col-md-4 text-end">
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            Crear empleado
+        </a>
+    </div>
 </form>
+
 
 <table class="table table-striped table-bordered">
     <thead>
