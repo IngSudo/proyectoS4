@@ -137,6 +137,8 @@
     <Content Include="Views\Departamentos\Index.cshtml" />
     <Content Include="Views\Departamentos\Create.cshtml" />
     <Content Include="Views\Departamentos\Edit.cshtml" />
+    <Content Include="Views\DeptEmp\Index.cshtml" />
+    <Content Include="Views\DeptEmp\Create.cshtml" />
     <None Include="Views\Empleados\Create.cshtml" />
     <Content Include="Views\Empleados\Index.cshtml" />
     <Content Include="Views\Empleados\Edit.cshtml" />
@@ -200,7 +202,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Acceso\" />
-    <Folder Include="Views\DeptEmp\" />
     <Folder Include="Views\Registrar\" />
   </ItemGroup>
   <ItemGroup>

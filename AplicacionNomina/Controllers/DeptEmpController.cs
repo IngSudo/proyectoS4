@@ -5,110 +5,97 @@ using System.Data.SqlClient;
 using System.Web.Mvc;
 using AplicacionNomina.Models;
 
-namespace AplicacionNomina.Controllers
+public class DeptEmpController : Controller
 {
-    public class DeptEmpController : Controller
+    string connectionString = "Data Source=.;Initial Catalog=Nomina;Integrated Security=True";
+
+    // MÉTODO AUXILIAR → llena el ViewBag con los departamentos
+    private void CargarDepartamentos(string seleccionado = null)
     {
-        // LISTAR asignaciones de un empleado
-        [HttpGet]
-        [Route("DeptEmp/{empNo:int}")]
-        public ActionResult Index(int empNo)
+        var items = new List<SelectListItem>();
+
+        using (var conn = new SqlConnection(connectionString))
+        using (var cmd = new SqlCommand("sp_ListarDepartamentos", conn)) // tu SP que lista departamentos
         {
-            // Trae nombre del empleado (usamos sp existente)
-            var eRow = SqlHelper.ExecuteDataRow("dbo.spEmpleados_Obtener",
-                new SqlParameter("@emp_no", SqlDbType.Int) { Value = empNo });
-            if (eRow == null) return HttpNotFound();
-
-            ViewBag.EmpNo = empNo;
-            ViewBag.Empleado = $"{eRow["first_name"]} {eRow["last_name"]}";
-
-            var dt = SqlHelper.ExecuteDataTable("dbo.spDeptEmp_ListarPorEmpleado",
-                new SqlParameter("@emp_no", SqlDbType.Int) { Value = empNo });
-
-            var list = new List<DeptEmpVM>();
-            foreach (DataRow r in dt.Rows)
+            cmd.CommandType = CommandType.StoredProcedure;
+            conn.Open();
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                list.Add(new DeptEmpVM
+                items.Add(new SelectListItem
                 {
-                    EmpNo = Convert.ToInt32(r["emp_no"]),
-                    DeptNo = Convert.ToInt32(r["dept_no"]),
-                    DeptName = Convert.ToString(r["dept_name"]),
-                    FromDate = Convert.ToDateTime(r["from_date"]),
-                    ToDate = Convert.ToDateTime(r["to_date"])
+                    Value = reader["dept_no"].ToString(),
+                    Text = reader["dept_name"].ToString(),
+                    Selected = (seleccionado != null && seleccionado == reader["dept_no"].ToString())
                 });
             }
-            return View(list); // Views/DeptEmp/Index.cshtml
         }
 
-        // GET: crear asignación
-        [HttpGet]
-        [Route("DeptEmp/Create/{empNo:int}")]
-        public ActionResult Create(int empNo)
+        ViewBag.Departamentos = items;
+    }
+
+    // GET: DeptEmp/Create
+    public ActionResult Create(int empNo)
+    {
+        var model = new DeptEmpVM { EmpNo = empNo };
+
+        ViewBag.EmpNo = empNo;
+        ViewBag.Empleado = ObtenerNombreEmpleado(empNo); // opcional
+
+        CargarDepartamentos();
+
+        return View(model);
+    }
+
+    // POST: DeptEmp/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Create(DeptEmpVM model)
+    {
+        if (ModelState.IsValid)
         {
-            ViewBag.EmpNo = empNo;
-
-            // combo de departamentos activos
-            var deps = SqlHelper.ExecuteDataTable("dbo.spDept_Listar",
-                new SqlParameter("@q", SqlDbType.VarChar, 100) { Value = "" });
-
-            ViewBag.Departamentos = new SelectList(deps.AsEnumerable(),
-                dataValueField: "dept_no",
-                dataTextField: "dept_name");
-
-            // valores por defecto
-            return View(new DeptEmpVM
+            try
             {
-                EmpNo = empNo,
-                FromDate = DateTime.Today,
-                ToDate = DateTime.Today
-            });
+                using (var conn = new SqlConnection(connectionString))
+                using (var cmd = new SqlCommand("sp_AsignarEmpleadoDepartamento", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmpNo", model.EmpNo);
+                    cmd.Parameters.AddWithValue("@DeptNo", model.DeptNo);
+                    cmd.Parameters.AddWithValue("@FromDate", model.FromDate);
+                    cmd.Parameters.AddWithValue("@ToDate", model.ToDate);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+
+                return RedirectToAction("Index", new { empNo = model.EmpNo });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al guardar: " + ex.Message);
+            }
         }
 
-        // POST: crear asignación
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("DeptEmp/Create")]
-        public ActionResult Create(DeptEmpVM model)
+        // Si hubo error, recargar combos
+        CargarDepartamentos(model.DeptNo?.ToString());
+
+        return View(model);
+    }
+
+    private string ObtenerNombreEmpleado(int empNo)
+    {
+        string nombre = "";
+        using (var conn = new SqlConnection(connectionString))
+        using (var cmd = new SqlCommand("sp_ObtenerEmpleadoPorId", conn))
         {
-            ViewBag.EmpNo = model.EmpNo;
-
-            var deps = SqlHelper.ExecuteDataTable("dbo.spDept_Listar",
-                new SqlParameter("@q", SqlDbType.VarChar, 100) { Value = "" });
-            ViewBag.Departamentos = new SelectList(deps.AsEnumerable(), "dept_no", "dept_name", model.DeptNo);
-
-            if (!ModelState.IsValid) return View(model);
-
-            var row = SqlHelper.ExecuteDataRow("dbo.spDeptEmp_Crear",
-                new SqlParameter("@emp_no", SqlDbType.Int) { Value = model.EmpNo },
-                new SqlParameter("@dept_no", SqlDbType.Int) { Value = model.DeptNo },
-                new SqlParameter("@from_date", SqlDbType.Date) { Value = model.FromDate },
-                new SqlParameter("@to_date", SqlDbType.Date) { Value = model.ToDate });
-
-            var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
-            var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
-
-            if (!ok) { ModelState.AddModelError("", msg); return View(model); }
-
-            TempData["ok"] = msg;
-            return RedirectToAction("Index", new { empNo = model.EmpNo });
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EmpNo", empNo);
+            conn.Open();
+            var reader = cmd.ExecuteReader();
+            if (reader.Read())
+                nombre = reader["FullName"].ToString();
         }
-
-        // POST: eliminar asignación (por PK)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("DeptEmp/Delete")]
-        public ActionResult Delete(int empNo, int deptNo, DateTime fromDate)
-        {
-            var row = SqlHelper.ExecuteDataRow("dbo.spDeptEmp_Eliminar",
-                new SqlParameter("@emp_no", SqlDbType.Int) { Value = empNo },
-                new SqlParameter("@dept_no", SqlDbType.Int) { Value = deptNo },
-                new SqlParameter("@from_date", SqlDbType.Date) { Value = fromDate });
-
-            var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
-            var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
-
-            TempData[ok ? "ok" : "err"] = msg;
-            return RedirectToAction("Index", new { empNo });
-        }
+        return nombre;
     }
 }
