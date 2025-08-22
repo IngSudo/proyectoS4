@@ -1,0 +1,53 @@
+@model IEnumerable<AplicacionNomina.Models.DeptEmpVM>
+@{
+    ViewBag.Title = "Asignaciones de departamento";
+}
+<h2>@ViewBag.Title</h2>
+
+<p><strong>Empleado:</strong> @ViewBag.Empleado (@ViewBag.EmpNo)</p>
+
+@if (TempData["ok"] != null)
+{<div class="alert alert-success">@TempData["ok"]</div>}
+@if (TempData["err"] != null)
+{<div class="alert alert-danger">@TempData["err"]</div>}
+
+<p>
+    <a class="btn btn-success" href="@Url.Action("Create","DeptEmp", new { empNo = (int)ViewBag.EmpNo })">
+        Nueva asignación
+    </a>
+    <a class="btn btn-default" href="@Url.Action("Index","Empleados")">Volver a empleados</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Departamento</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var x in Model)
+        {
+            <tr>
+                <td>@x.DeptName (@x.DeptNo)</td>
+                <td>@x.FromDate.ToString("yyyy-MM-dd")</td>
+                <td>@x.ToDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @using (Html.BeginForm("Delete", "DeptEmp", FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("empNo", x.EmpNo)
+                        @Html.Hidden("deptNo", x.DeptNo)
+                        @Html.Hidden("fromDate", x.FromDate.ToString("yyyy-MM-dd"))
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Eliminar esta asignación?');">
+                            Eliminar
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

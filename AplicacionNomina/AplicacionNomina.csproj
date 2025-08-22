@@ -122,6 +122,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccesoController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
+    <Compile Include="Controllers\DeptEmpController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RegistrarController.cs" />
@@ -129,6 +130,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\DeptEmpVM.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\SqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -198,6 +200,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Acceso\" />
+    <Folder Include="Views\DeptEmp\" />
     <Folder Include="Views\Registrar\" />
   </ItemGroup>
   <ItemGroup>
