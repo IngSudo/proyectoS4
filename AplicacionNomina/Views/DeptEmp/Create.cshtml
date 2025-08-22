@@ -1,0 +1,54 @@
+﻿@model AplicacionNomina.Models.DeptEmpVM
+@{
+    ViewBag.Title = "Nueva asignación";
+}
+<h2>@ViewBag.Title</h2>
+
+<p>
+    <strong>Empleado:</strong>
+    @if (ViewBag.Empleado != null)
+    {
+        @ViewBag.Empleado <text>(@ViewBag.EmpNo)</text>
+    }
+    else
+    {
+        @ViewBag.EmpNo
+    }
+</p>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(m => m.EmpNo)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.DeptNo, "Departamento")
+        @Html.DropDownListFor(
+            m => m.DeptNo,
+            (IEnumerable<SelectListItem>)ViewBag.Departamentos,   /* ← sin comentarios aquí */
+            "-- Seleccione --",
+            new { @class = "form-control" }
+        )
+        @Html.ValidationMessageFor(m => m.DeptNo, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FromDate, "Desde")
+        @Html.TextBoxFor(m => m.FromDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FromDate, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ToDate, "Hasta")
+        @Html.TextBoxFor(m => m.ToDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ToDate, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a class="btn btn-default" href="@Url.Action("Index","DeptEmp", new { empNo = Model.EmpNo })">Cancelar</a>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

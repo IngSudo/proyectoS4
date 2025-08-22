@@ -1,0 +1,70 @@
+﻿@model IEnumerable<AplicacionNomina.Models.Employee>
+@{
+    ViewBag.Title = "Empleados";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div>
+}
+
+<form method="get" class="form-inline mb-3">
+    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control me-2"
+           placeholder="Buscar por nombre, apellido o cédula" />
+
+    <button type="submit" class="btn btn-primary me-2">Buscar</button>
+
+    <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Limpiar</a>
+
+    <a href="@Url.Action("Create")" class="btn btn-success">Crear empleado</a>
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().EmpNo)</th>
+            <th>@Html.DisplayNameFor(m => m.First().CI)</th>
+            <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
+            <th>Género</th>
+            <th>@Html.DisplayNameFor(m => m.First().HireDate)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Correo)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.EmpNo</td>
+                <td>@e.CI</td>
+                <td>@e.FullName</td>
+                <td>
+                    @(e.Gender == 'M' ? "Masculino"
+                     : e.Gender == 'F' ? "Femenino"
+                     : "Otro")
+                </td>
+                <td>@e.HireDate.ToString("yyyy-MM-dd")</td>
+                <td>@e.Correo</td>
+                <td>
+                    <a class="btn btn-sm btn-info" href="@Url.Action("Index","DeptEmp", new { empNo = e.EmpNo })">
+                        Asignaciones
+                    </a>
+                    <a class="btn btn-sm btn-primary" href="@Url.Action("Edit","Empleados", new { id = e.EmpNo })" style="margin-left:4px;">
+                        Editar
+                    </a>
+
+                    @using (Html.BeginForm("Desactivar", "Empleados", new { id = e.EmpNo }, FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-warning" style="margin-left:4px;"
+                                onclick="return confirm('¿Desactivar a @e.FullName?');">
+                            Desactivar
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
