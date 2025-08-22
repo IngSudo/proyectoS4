@@ -1,0 +1,58 @@
+@model AplicacionNomina.Models.Employee
+@{
+    ViewBag.Title = "Editar empleado";
+}
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Edit", "Empleados", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(m => m.EmpNo)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.CI)
+        @Html.TextBoxFor(m => m.CI, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CI)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName)
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FirstName)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.LastName)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Gender)
+        @Html.DropDownListFor(m => m.Gender, (SelectList)ViewBag.Generos, "-- Seleccione --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Gender)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.BirthDate)
+        @Html.TextBoxFor(m => m.BirthDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.BirthDate)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.HireDate)
+        @Html.TextBoxFor(m => m.HireDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.HireDate)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Correo)
+        @Html.TextBoxFor(m => m.Correo, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Correo)
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    <a class="btn btn-default" href="@Url.Action("Index")">Cancelar</a>
+}
