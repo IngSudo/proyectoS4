@@ -2,15 +2,12 @@
 @{
     ViewBag.Title = "Empleados";
 }
+
 <h2>@ViewBag.Title</h2>
 
 @if (TempData["ok"] != null)
 {
     <div class="alert alert-success">@TempData["ok"]</div>
-}
-@if (TempData["err"] != null)
-{
-    <div class="alert alert-danger">@TempData["err"]</div>
 }
 
 <form method="get" class="form-inline" style="margin-bottom:10px;">
@@ -26,10 +23,10 @@
             <th>@Html.DisplayNameFor(m => m.First().EmpNo)</th>
             <th>@Html.DisplayNameFor(m => m.First().CI)</th>
             <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Gender)</th>
+            <th>Género</th>
             <th>@Html.DisplayNameFor(m => m.First().HireDate)</th>
             <th>@Html.DisplayNameFor(m => m.First().Correo)</th>
-            <th>Acciones</th> @* ← NUEVO *@
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -47,16 +44,18 @@
                 <td>@e.HireDate.ToString("yyyy-MM-dd")</td>
                 <td>@e.Correo</td>
                 <td>
-                    <a class="btn btn-sm btn-primary"
-                       href="@Url.Action("Edit","Empleados", new { id = e.EmpNo })">
+                    <a class="btn btn-sm btn-info" href="@Url.Action("Index","DeptEmp", new { empNo = e.EmpNo })">
+                        Asignaciones
+                    </a>
+                    <a class="btn btn-sm btn-primary" href="@Url.Action("Edit","Empleados", new { id = e.EmpNo })" style="margin-left:4px;">
                         Editar
                     </a>
 
                     @using (Html.BeginForm("Desactivar", "Empleados", new { id = e.EmpNo }, FormMethod.Post, new { style = "display:inline" }))
                     {
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-warning"
-                                onclick="return confirm('¿Desactivar al empleado @e.FullName (#@e.EmpNo)?');">
+                        <button type="submit" class="btn btn-sm btn-warning" style="margin-left:4px;"
+                                onclick="return confirm('¿Desactivar a @e.FullName?');">
                             Desactivar
                         </button>
                     }

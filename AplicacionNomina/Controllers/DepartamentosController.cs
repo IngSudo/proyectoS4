@@ -9,13 +9,15 @@ namespace AplicacionNomina.Controllers
 {
     public class DepartamentosController : Controller
     {
-        // LISTAR
+        // LISTAR + BUSCAR
         [HttpGet]
         [Route("Departamentos")]
         [Route("Departamentos/Index")]
         public ActionResult Index(string q)
         {
-            var prm = new SqlParameter("@q", (object)(q ?? string.Empty)) { SqlDbType = SqlDbType.VarChar, Size = 100 };
+            var prm = new SqlParameter("@q", (object)(q ?? string.Empty))
+            { SqlDbType = SqlDbType.VarChar, Size = 100 };
+
             var dt = SqlHelper.ExecuteDataTable("dbo.spDept_Listar", prm);
 
             var list = new List<Department>();
@@ -28,6 +30,7 @@ namespace AplicacionNomina.Controllers
                     IsActive = Convert.ToBoolean(r["is_active"])
                 });
             }
+
             ViewBag.Busqueda = q;
             return View(list); // Views/Departamentos/Index.cshtml
         }
@@ -38,8 +41,8 @@ namespace AplicacionNomina.Controllers
         public ActionResult Create()
         {
             var row = SqlHelper.ExecuteDataRow("dbo.spDept_SiguienteDeptNo");
-            var nextNo = row != null ? Convert.ToInt32(row["siguiente"]) : 1;
-            return View(new Department { DeptNo = nextNo });
+            var next = row != null ? Convert.ToInt32(row["siguiente"]) : 1;
+            return View(new Department { DeptNo = next });
         }
 
         // CREAR (POST)
@@ -52,8 +55,7 @@ namespace AplicacionNomina.Controllers
 
             var row = SqlHelper.ExecuteDataRow("dbo.spDept_Crear",
                 new SqlParameter("@dept_no", SqlDbType.Int) { Value = model.DeptNo },
-                new SqlParameter("@dept_name", SqlDbType.VarChar, 50) { Value = model.DeptName?.Trim() ?? string.Empty }
-            );
+                new SqlParameter("@dept_name", SqlDbType.VarChar, 50) { Value = model.DeptName?.Trim() ?? string.Empty });
 
             var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
             var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
@@ -64,13 +66,14 @@ namespace AplicacionNomina.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: /Departamentos/Edit/5
+        // EDITAR (GET)
         [HttpGet]
-        [Route("Departamentos/Edit/{id}")]
+        [Route("Departamentos/Edit/{id:int}")]
         public ActionResult Edit(int id)
         {
             var r = SqlHelper.ExecuteDataRow("dbo.spDept_Obtener",
-                new SqlParameter("@dept_no", System.Data.SqlDbType.Int) { Value = id });
+                new SqlParameter("@dept_no", SqlDbType.Int) { Value = id });
+
             if (r == null) return HttpNotFound();
 
             var model = new Department
@@ -82,7 +85,7 @@ namespace AplicacionNomina.Controllers
             return View(model); // Views/Departamentos/Edit.cshtml
         }
 
-        // POST: /Departamentos/Edit
+        // EDITAR (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Departamentos/Edit")]
@@ -91,9 +94,8 @@ namespace AplicacionNomina.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var row = SqlHelper.ExecuteDataRow("dbo.spDept_Editar",
-                new System.Data.SqlClient.SqlParameter("@dept_no", System.Data.SqlDbType.Int) { Value = model.DeptNo },
-                new System.Data.SqlClient.SqlParameter("@dept_name", System.Data.SqlDbType.VarChar, 50) { Value = model.DeptName?.Trim() ?? string.Empty }
-            );
+                new SqlParameter("@dept_no", SqlDbType.Int) { Value = model.DeptNo },
+                new SqlParameter("@dept_name", SqlDbType.VarChar, 50) { Value = model.DeptName?.Trim() ?? string.Empty });
 
             var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
             var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
@@ -104,14 +106,14 @@ namespace AplicacionNomina.Controllers
             return RedirectToAction("Index");
         }
 
-        // POST: /Departamentos/Desactivar/5
+        // DESACTIVAR (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Departamentos/Desactivar/{id}")]
+        [Route("Departamentos/Desactivar/{id:int}")]
         public ActionResult Desactivar(int id)
         {
             var row = SqlHelper.ExecuteDataRow("dbo.spDept_Desactivar",
-                new System.Data.SqlClient.SqlParameter("@dept_no", System.Data.SqlDbType.Int) { Value = id });
+                new SqlParameter("@dept_no", SqlDbType.Int) { Value = id });
 
             var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
             var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
