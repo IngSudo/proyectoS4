@@ -10,10 +10,14 @@
     <div class="alert alert-success">@TempData["ok"]</div>
 }
 
-<form method="get" class="form-inline" style="margin-bottom:10px;">
-    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control" placeholder="Buscar por nombre, apellido o cédula" />
-    <button type="submit" class="btn btn-primary">Buscar</button>
-    <a href="@Url.Action("Index")" class="btn btn-default">Limpiar</a>
+<form method="get" class="form-inline mb-3">
+    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control me-2"
+           placeholder="Buscar por nombre, apellido o cédula" />
+
+    <button type="submit" class="btn btn-primary me-2">Buscar</button>
+
+    <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Limpiar</a>
+
     <a href="@Url.Action("Create")" class="btn btn-success">Crear empleado</a>
 </form>
 
