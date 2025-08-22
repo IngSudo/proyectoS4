@@ -1,0 +1,48 @@
+@model IEnumerable<AplicacionNomina.Models.Department>
+@{
+    ViewBag.Title = "Departamentos";
+}
+<h2>@ViewBag.Title</h2>
+
+@if (TempData["ok"] != null)
+{<div class="alert alert-success">@TempData["ok"]</div>}
+@if (TempData["err"] != null)
+{<div class="alert alert-danger">@TempData["err"]</div>}
+
+<form method="get" class="form-inline" style="margin-bottom:10px;">
+    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control" placeholder="Buscar por nombre" />
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    <a href="@Url.Action("Index")" class="btn btn-default">Limpiar</a>
+    <a href="@Url.Action("Create")" class="btn btn-success">Crear departamento</a>
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().DeptNo)</th>
+            <th>@Html.DisplayNameFor(m => m.First().DeptName)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.DeptNo</td>
+                <td>@d.DeptName</td>
+                <td>
+                    <a class="btn btn-sm btn-primary"
+                       href="@Url.Action("Edit","Departamentos", new { id = d.DeptNo })">Editar</a>
+
+                    @using (Html.BeginForm("Desactivar", "Departamentos", new { id = d.DeptNo }, FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-warning"
+                                onclick="return confirm('¿Desactivar el departamento @d.DeptName (#@d.DeptNo)?');">
+                            Desactivar
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
