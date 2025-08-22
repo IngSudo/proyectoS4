@@ -117,5 +117,90 @@ namespace AplicacionNomina.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        [Route("Empleados/Edit/{id}")]
+        public ActionResult Edit(int id)
+        {
+            var r = SqlHelper.ExecuteDataRow("dbo.spEmpleados_Obtener",
+                new SqlParameter("@emp_no", SqlDbType.Int) { Value = id });
+
+            if (r == null) return HttpNotFound();
+
+            var model = new Employee
+            {
+                EmpNo = Convert.ToInt32(r["emp_no"]),
+                CI = Convert.ToString(r["ci"]),
+                BirthDate = Convert.ToDateTime(r["birth_date"]),
+                FirstName = Convert.ToString(r["first_name"]),
+                LastName = Convert.ToString(r["last_name"]),
+                Gender = Convert.ToString(r["gender"])[0],
+                HireDate = Convert.ToDateTime(r["hire_date"]),
+                Correo = r["correo"] == DBNull.Value ? null : Convert.ToString(r["correo"]),
+                IsActive = Convert.ToBoolean(r["is_active"])
+            };
+
+            ViewBag.Generos = new SelectList(new[]
+            {
+        new { Id = "M", Texto = "Masculino" },
+        new { Id = "F", Texto = "Femenino"  },
+        new { Id = "O", Texto = "Otro"      }
+    }, "Id", "Texto", model.Gender);
+
+            return View(model); // Views/Empleados/Edit.cshtml
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Empleados/Edit")]
+        public ActionResult Edit(Employee model)
+        {
+            ViewBag.Generos = new SelectList(new[]
+            {
+        new { Id = "M", Texto = "Masculino" },
+        new { Id = "F", Texto = "Femenino"  },
+        new { Id = "O", Texto = "Otro"      }
+    }, "Id", "Texto", model.Gender);
+
+            if (!ModelState.IsValid) return View(model);
+
+            var correoVal = string.IsNullOrWhiteSpace(model.Correo)
+                ? (object)DBNull.Value : (object)model.Correo.Trim();
+
+            var row = SqlHelper.ExecuteDataRow("dbo.spEmpleados_Editar",
+                new SqlParameter("@emp_no", SqlDbType.Int) { Value = model.EmpNo },
+                new SqlParameter("@ci", SqlDbType.VarChar, 50) { Value = model.CI?.Trim() ?? string.Empty },
+                new SqlParameter("@birth_date", SqlDbType.Date) { Value = model.BirthDate },
+                new SqlParameter("@first_name", SqlDbType.VarChar, 50) { Value = model.FirstName?.Trim() ?? string.Empty },
+                new SqlParameter("@last_name", SqlDbType.VarChar, 50) { Value = model.LastName?.Trim() ?? string.Empty },
+                new SqlParameter("@gender", SqlDbType.Char, 1) { Value = model.Gender },
+                new SqlParameter("@hire_date", SqlDbType.Date) { Value = model.HireDate },
+                new SqlParameter("@correo", SqlDbType.VarChar, 100) { Value = correoVal }
+            );
+
+            var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
+            var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
+
+            if (!ok) { ModelState.AddModelError("", msg); return View(model); }
+
+            TempData["ok"] = msg; // "Empleado actualizado correctamente."
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Empleados/Desactivar/{id}")]
+        public ActionResult Desactivar(int id)
+        {
+            var row = SqlHelper.ExecuteDataRow("dbo.spEmpleados_Desactivar",
+                new SqlParameter("@emp_no", SqlDbType.Int) { Value = id });
+
+            var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
+            var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
+
+            TempData[ok ? "ok" : "err"] = msg;
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
