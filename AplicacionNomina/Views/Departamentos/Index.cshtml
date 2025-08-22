@@ -29,6 +29,19 @@
             <tr>
                 <td>@d.DeptNo</td>
                 <td>@d.DeptName</td>
+                <td>
+                    <a class="btn btn-sm btn-primary"
+                       href="@Url.Action("Edit","Departamentos", new { id = d.DeptNo })">Editar</a>
+
+                    @using (Html.BeginForm("Desactivar", "Departamentos", new { id = d.DeptNo }, FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-warning"
+                                onclick="return confirm('¿Desactivar el departamento @d.DeptName (#@d.DeptNo)?');">
+                            Desactivar
+                        </button>
+                    }
+                </td>
             </tr>
         }
     </tbody>
