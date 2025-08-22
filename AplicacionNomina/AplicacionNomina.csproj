@@ -121,12 +121,17 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccesoController.cs" />
+    <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RegistrarController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\SqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Views\Empleados\Create.cshtml" />
+    <Content Include="Views\Empleados\Index.cshtml" />
     <None Include="Views\Home\Registrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Acceso\" />
     <Folder Include="Views\Registrar\" />
   </ItemGroup>

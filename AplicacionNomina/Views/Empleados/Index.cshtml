@@ -1,0 +1,43 @@
+@model IEnumerable<AplicacionNomina.Models.Employee>
+@{
+    ViewBag.Title = "Empleados";
+}
+<h2>@ViewBag.Title</h2>
+
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div>
+}
+
+<form method="get" class="form-inline" style="margin-bottom:10px;">
+    <input type="text" name="q" value="@ViewBag.Busqueda" class="form-control" placeholder="Buscar por nombre, apellido o cédula" />
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    <a href="@Url.Action("Index")" class="btn btn-default">Limpiar</a>
+    <a href="@Url.Action("Create")" class="btn btn-success">Crear empleado</a>
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().EmpNo)</th>
+            <th>@Html.DisplayNameFor(m => m.First().CI)</th>
+            <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Gender)</th>
+            <th>@Html.DisplayNameFor(m => m.First().HireDate)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Correo)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.EmpNo</td>
+                <td>@e.CI</td>
+                <td>@e.FullName</td>
+                <td>@e.Gender</td>
+                <td>@e.HireDate.ToString("yyyy-MM-dd")</td>
+                <td>@e.Correo</td>
+            </tr>
+        }
+    </tbody>
+</table>
