@@ -132,6 +132,7 @@
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\DeptEmpVM.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\LoginVM.cs" />
     <Compile Include="Models\SqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Views\Departamentos\Index.cshtml" />

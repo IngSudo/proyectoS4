@@ -1,58 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-//librerias conectar SQL
 using System.Data;
 using System.Data.SqlClient;
-
+using System.Web.Mvc;
 using AplicacionNomina.Models;
-using System.Text;
-using System.Configuration;
-using System.Web.UI.WebControls;
-
-//encriptar
-using System.Security.Cryptography;
 
 namespace AplicacionNomina.Controllers
 {
     public class AccesoController : Controller
     {
-
-        //GET: Acceso
+        [HttpGet]
         public ActionResult Index()
         {
-            return View();
-        }   
-
-        public ActionResult Autenticar()
-        {
-            return View();
+            return View(new LoginVM());
         }
 
-        //Post: Acceso
         [HttpPost]
-        public ActionResult Autenticar(Employee oEmpleado)
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(LoginVM model, string returnUrl)
         {
-            try
+            if (!ModelState.IsValid) return View(model);
+
+            var row = SqlHelper.ExecuteDataRow("dbo.spAcceso_Login",
+                new SqlParameter("@usuario", SqlDbType.VarChar, 100) { Value = model.Usuario?.Trim() ?? "" },
+                new SqlParameter("@clave_plana", SqlDbType.VarChar, 200) { Value = model.Clave ?? "" });
+
+            var ok = row != null && Convert.ToInt32(row["ok"]) == 1;
+            var msg = row != null ? Convert.ToString(row["mensaje"]) : "Error inesperado.";
+
+            if (!ok)
             {
-                using(SqlConnection cn=new SqlConnection(ConfigurationManager.ConnectionStrings["NominaContext"].ConnectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("Select * from employees");
-                    cn.Open();
-                    cmd.ExecuteNonQuery();
-                    cn.Close();
-                    return RedirectToAction("Index", "Home");
-                }
+                ModelState.AddModelError("", msg);
+                return View(model);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error" + e);
-                ViewBag.Error = "Usuario o clave incorrectos.";
-                return View();
-            }
+
+            // Guardar sesión mínima
+            Session["EmpNo"] = Convert.ToInt32(row["emp_no"]);
+            Session["Usuario"] = model.Usuario;
+
+            // Redirigir
+            if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult Salir()
+        {
+            Session.Clear();
+            return RedirectToAction("Index");
         }
     }
 }
