@@ -1,13 +1,13 @@
 @{
     ViewBag.Title = "Autenticar";
-    Layout = null; 
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login - Aplicacion Nomina</title>
+    <title>Nomina</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,115 +18,62 @@
         };
     </script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-900">
+<body class="min-h-screen flex items-center justify-center bg-black">
 
-    <main class="max-w-6xl mx-auto min-h-screen grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-6 lg:p-10">
+    <section class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <h3 class="text-center text-slate-500 font-semibold">Welcome!</h3>
+        <h2 class="text-center text-3xl mb-2">Nomina</h2>
+        <p class="text-center text-slate-500 mb-6">Inicia sesion para continuar</p>
 
-        <div class="rounded-3xl h-72 lg:h-[520px] shadow-2xl overflow-hidden relative">
-            <div class="absolute inset-0 bg-[radial-gradient(1000px_600px_at_20%_15%,rgba(255,77,87,.45),transparent_60%)]"></div>
-            <img src="@Url.Content("~/Content/img/img_1.jpeg")"
-                 class="w-full h-full object-cover opacity-70"
-                 alt="Ilustracion de acceso" />
-            <div class="w-full h-full bg-gradient-to-tr from-rose-500/30 via-rose-400/10 to-transparent"></div>
-        </div>
+        @if (ViewBag.Error != null)
+        {
+            <div class="mb-4 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3 text-sm">
+                @ViewBag.Error
+            </div>
+        }
 
+        @using (Html.BeginForm("Autenticar", "Home", FormMethod.Post, new { autocomplete = "on" }))
+        {
+            @Html.AntiForgeryToken()
 
-        <section class="bg-white rounded-2xl shadow-2xl p-8 lg:p-10 max-w-md w-full mx-auto">
-            <h3 class="text-center text-slate-500 font-semibold">Bienvenido</h3>
-            <h2 class="text-center font-black text-4xl tracking-tight mb-2">ISTER Nomina</h2>
-            <p class="text-center text-slate-500 mb-6">Inicia sesion para continuar</p>
-
-            <div class="space-y-3">
-                <a class="w-full inline-flex items-center justify-center gap-2 border border-slate-200 rounded-xl px-4 py-3 bg-white hover:bg-slate-50 transition"
-                   href="javascript:void(0)"
-                   aria-label="Iniciar sesion con Google">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_48dp.png"
-                         class="w-5 h-5"
-                         alt="" />
-                    <span class="font-semibold text-slate-800">Entrar con Google</span>
-                </a>
+            <div class="mb-4">
+                <label for="Usuario" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <input id="Usuario" name="Usuario" type="email" autofocus
+                       class="block w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-900
+                              focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
+                       required autocomplete="username" />
             </div>
 
-            <!-- Divider -->
-            <div class="flex items-center gap-3 my-6 text-slate-400 font-semibold">
-                <div class="h-px bg-slate-200 flex-1"></div>
-                <span>o continua con</span>
-                <div class="h-px bg-slate-200 flex-1"></div>
-            </div>
-
-            @if (ViewBag.Error != null)
-            {
-                <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3 text-sm">
-                    @ViewBag.Error
-                </div>
-            }
-
-            @using (Html.BeginForm("Autenticar", "Home", FormMethod.Post, new { autocomplete = "on" }))
-            {
-                @Html.AntiForgeryToken()
-
-                <div class="mb-4">
-                    <label for="Usuario" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                    <input id="Usuario"
-                           name="Usuario"
-                           type="email"
-                           autofocus
-                           class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400
+            <div class="mb-4">
+                <label for="Clave" class="block text-sm font-medium text-slate-700 mb-1">Contrasena</label>
+                <div class="relative">
+                    <input id="Clave" name="Clave" type="password"
+                           class="block w-full rounded-lg border border-slate-300 px-4 py-2 pr-10 text-slate-900
                                   focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
-                           required
-                           autocomplete="username" />
+                           required autocomplete="current-password" />
+                    <button type="button" id="togglePwd"
+                            class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700"
+                            aria-label="Mostrar u ocultar contrasena"></button>
                 </div>
+            </div>
 
-                <div class="mb-2">
-                    <div class="flex items-center justify-between">
-                        <label for="Clave" class="block text-sm font-medium text-slate-700">Contrasena</label>
-                        <small>
-                            @Html.ActionLink("Olvidaste tu contrasena", "Recuperar", "Home", null, new { @class = "text-slate-500 hover:text-slate-700" })
-                        </small>
-                    </div>
+            <div class="mb-4 flex items-center gap-2">
+                <input id="Remember" name="Remember" type="checkbox"
+                       class="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
+                <label for="Remember" class="text-sm text-slate-600">Recordarme</label>
+            </div>
 
-                    <div class="relative mt-1">
-                        <input id="Clave"
-                               name="Clave"
-                               type="password"
-                               class="block w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-slate-900
-                                      focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
-                               required
-                               autocomplete="current-password" />
+            <button type="submit"
+                    class="w-full rounded-lg bg-brand hover:bg-[#e83547] text-white font-semibold py-2 shadow transition">
+                Iniciar sesion
+            </button>
+        }
 
-                        <button id="togglePwd"
-                                type="button"
-                                class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700"
-                                aria-label="Mostrar u ocultar contrasena">
-                            
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Recordarme (opcional) -->
-                <div class="mt-2 mb-4 flex items-center gap-2">
-                    <input id="Remember"
-                           name="Remember"
-                           type="checkbox"
-                           class="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
-                    <label for="Remember" class="text-sm text-slate-600">Recordarme en este equipo</label>
-                </div>
-
-                <!-- Botón -->
-                <div>
-                    <button type="submit"
-                            class="w-full rounded-xl bg-brand hover:bg-[#e83547] text-white font-semibold py-3 shadow-lg shadow-rose-500/25 transition">
-                        Iniciar sesion
-                    </button>
-                </div>
-            }
-
-            <p class="text-center text-slate-500 mt-4 text-sm">
-                No tienes una cuenta
-                @Html.ActionLink("Registrate", "Registrar", "Home", null, new { @class = "text-slate-800 hover:underline" })
-            </p>
-        </section>
-    </main>
+        <p class="text-center text-slate-500 mt-4 text-sm">
+            No tienes una cuenta
+            @Html.ActionLink("Registrate", "Registrar", "Home", null, new { @class = "text-slate-800 hover:underline" })
+        </p>
+    </section>
 
     <script>
         (function () {
