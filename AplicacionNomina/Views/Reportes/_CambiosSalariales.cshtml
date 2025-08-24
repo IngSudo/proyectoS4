@@ -1,0 +1,48 @@
+﻿@model List<AplicacionNomina.Models.CambioSalarial>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>No. Empleado</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Departamento</th>
+                <th class="text-right">Salario Anterior</th>
+                <th class="text-right">Salario Nuevo</th>
+                <th class="text-right">Diferencia</th>
+                <th class="text-right">% Cambio</th>
+                <th>Fecha Cambio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EmpNo</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Apellido</td>
+                    <td>@item.Departamento</td>
+                    <td class="text-right">@item.SalarioAnterior.ToString("C")</td>
+                    <td class="text-right">@item.SalarioNuevo.ToString("C")</td>
+                    <td class="text-right @(item.DiferenciaSalario >= 0 ? "text-success" : "text-danger")">
+                        @item.DiferenciaSalario.ToString("C")
+                    </td>
+                    <td class="text-right">
+                        <span class="label @(item.PorcentajeCambio >= 0 ? "label-success" : "label-danger")">
+                            @item.PorcentajeCambio.ToString("F1")%
+                        </span>
+                    </td>
+                    <td>@item.FechaCambio.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No se encontraron cambios salariales en el rango de fechas especificado.
+    </div>
+}

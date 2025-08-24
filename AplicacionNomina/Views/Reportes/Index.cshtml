@@ -1,0 +1,232 @@
+﻿@model AplicacionNomina.Models.ReportesViewModel
+@using AplicacionNomina.Models
+
+@{
+    ViewBag.Title = "Reportes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>
+                    Sistema de Reportes
+                    <small>Generar reportes de nómina y estructura organizacional</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Parámetros de Reporte
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("GenerarReporte", "Reportes", FormMethod.Post, new { @class = "form-horizontal", @id = "reportForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Parametros.TipoReporte, "Tipo de Reporte:", new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Parametros.TipoReporte, new SelectList(new[] {
+                                new { Value = "nomina-vigente", Text = "Nómina Vigente por Departamento" },
+                                new { Value = "cambios-salariales", Text = "Cambios Salariales" },
+                                new { Value = "estructura-organizacional", Text = "Estructura Organizacional" }
+                            }, "Value", "Text"), "Seleccione un tipo de reporte...", new { @class = "form-control", @id = "tipoReporte" })
+                            @Html.ValidationMessageFor(m => m.Parametros.TipoReporte, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Parametros.DeptNo, "Departamento:", new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Parametros.DeptNo,
+                                new SelectList(Model.Departamentos, "DeptNo", "DeptName", Model.Parametros.DeptNo),
+                                new { @class = "form-control", @id = "DeptNo" })
+                            @Html.ValidationMessageFor(m => m.Parametros.DeptNo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div id="fechasGroup" class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(m => m.Parametros.FechaInicio, "Fecha Inicio:", new { @class = "control-label" })
+                                    @Html.EditorFor(m => m.Parametros.FechaInicio, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "fechaInicioInput" } })
+                                    @Html.ValidationMessageFor(m => m.Parametros.FechaInicio, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.LabelFor(m => m.Parametros.FechaFin, "Fecha Fin:", new { @class = "control-label" })
+                                    @Html.EditorFor(m => m.Parametros.FechaFin, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "fechaFinInput" } })
+                                    @Html.ValidationMessageFor(m => m.Parametros.FechaFin, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.SinFecha, new { id = "sinFechaCheckbox" })
+                                    Buscar sin fecha
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa fa-search"></i> Generar Reporte
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.MostrarResultados)
+            {
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="fa fa-download"></i> Exportar Reporte
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="btn-group-vertical btn-block">
+                            <button type="button" class="btn btn-danger" id="btnExportarPDF">
+                                <i class="fa fa-file-pdf"></i> Exportar a PDF
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnExportarExcel">
+                                <i class="fa fa-file-excel"></i> Exportar a Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-8">
+            @if (Model.MostrarResultados)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Resultados del Reporte
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        @if (Model.TipoReporte == "nomina-vigente")
+                        {
+                            @Html.Partial("_NominaVigente", Model.DatosReporte)
+                        }
+                        else if (Model.TipoReporte == "cambios-salariales")
+                        {
+                            @Html.Partial("_CambiosSalariales", Model.DatosReporte)
+                        }
+                        else if (Model.TipoReporte == "estructura-organizacional")
+                        {
+                            @Html.Partial("_EstructuraOrganizacional", (List<DepartamentoViewModel>)Model.DatosReporte)
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <div class="empty-state">
+                            <i class="fa fa-chart-line fa-5x text-muted"></i>
+                            <h3 class="text-muted">Seleccione los parámetros y genere un reporte</h3>
+                            <p class="text-muted">Los resultados aparecerán aquí una vez que ejecute el reporte.</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#tipoReporte').change(function() {
+                var tipoReporte = $(this).val();
+                var fechasGroup = $('#fechasGroup');
+                var sinFechaCheckbox = $('#sinFechaCheckbox');
+
+                if (tipoReporte === 'cambios-salariales' || tipoReporte === 'nomina-vigente') {
+                    fechasGroup.show();
+                    sinFechaCheckbox.closest('.form-group').show();
+                } else {
+                    fechasGroup.hide();
+                    sinFechaCheckbox.closest('.form-group').hide();
+                }
+
+                if (tipoReporte === 'cambios-salariales') {
+                    $('input[name="Parametros.FechaInicio"]').prop('required', true);
+                    $('input[name="Parametros.FechaFin"]').prop('required', true);
+                    $('#fechaFinInput').closest('.col-md-6').show();
+                } else if (tipoReporte === 'nomina-vigente') {
+                    $('input[name="Parametros.FechaInicio"]').prop('required', false);
+                    $('input[name="Parametros.FechaFin"]').prop('required', false);
+                    $('#fechaFinInput').closest('.col-md-6').hide();
+                } else {
+                    $('input[name="Parametros.FechaInicio"]').prop('required', false);
+                    $('input[name="Parametros.FechaFin"]').prop('required', false);
+                }
+            });
+
+            $('#sinFechaCheckbox').change(function() {
+                var fechaInput = $('#fechaInicioInput');
+                if ($(this).is(':checked')) {
+                    fechaInput.prop('disabled', true).val('');
+                } else {
+                    fechaInput.prop('disabled', false);
+                }
+            });
+
+            $('#tipoReporte').trigger('change');
+
+            $('#btnExportarPDF').click(function() {
+                var form = $('<form>', {
+                    method: 'POST',
+                    action: '@Url.Action("ExportarPDF", "Reportes")'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '__RequestVerificationToken',
+                    value: $('input[name="__RequestVerificationToken"]').val()
+                }));
+
+                form.append($('<input>', { type: 'hidden', name: 'tipoReporte', value: $('#tipoReporte').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'deptNo', value: $('#DeptNo').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'fechaInicio', value: $('#fechaInicioInput').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'fechaFin', value: $('#fechaFinInput').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'sinFecha', value: $('#sinFechaCheckbox').is(':checked') }));
+
+                form.appendTo('body').submit().remove();
+            });
+
+            $('#btnExportarExcel').click(function() {
+                var form = $('<form>', {
+                    method: 'POST',
+                    action: '@Url.Action("ExportarExcel", "Reportes")'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '__RequestVerificationToken',
+                    value: $('input[name="__RequestVerificationToken"]').val()
+                }));
+
+                form.append($('<input>', { type: 'hidden', name: 'tipoReporte', value: $('#tipoReporte').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'deptNo', value: $('#DeptNo').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'fechaInicio', value: $('#fechaInicioInput').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'fechaFin', value: $('#fechaFinInput').val() }));
+                form.append($('<input>', { type: 'hidden', name: 'sinFecha', value: $('#sinFechaCheckbox').is(':checked') }));
+
+                form.appendTo('body').submit().remove();
+            });
+        });
+    </script>
+}

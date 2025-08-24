@@ -1,0 +1,49 @@
+﻿@using AplicacionNomina.Models
+@model List<AplicacionNomina.Models.NominaVigente>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>No. Empleado</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Departamento</th>
+                    <th class="text-right">Salario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{decimal totalSalarios = 0;}
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.EmpNo</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Apellido</td>
+                        <td>@item.Departamento</td>
+                        <td class="text-right">@item.Salario.ToString("C")</td>
+                    </tr>
+                    totalSalarios += item.Salario;
+                }
+            </tbody>
+            <tfoot>
+                <tr class="info">
+                    <th colspan="4" class="text-right">Total de Salarios:</th>
+                    <th class="text-right">@totalSalarios.ToString("C")</th>
+                </tr>
+                <tr class="info">
+                    <th colspan="4" class="text-right">Total de Empleados:</th>
+                    <th class="text-right">@Model.Count</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No se encontraron registros para los criterios seleccionados.
+    </div>
+}

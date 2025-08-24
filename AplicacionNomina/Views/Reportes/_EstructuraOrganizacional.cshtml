@@ -1,0 +1,65 @@
+﻿@model List<AplicacionNomina.Models.DepartamentoViewModel>
+
+@foreach (var departamento in Model)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <i class="fa fa-building"></i> @departamento.NombreDepartamento
+                <small class="pull-right">
+                    <i class="fa fa-user-tie"></i> Manager: @departamento.NombreManager @departamento.ApellidoManager
+                </small>
+            </h4>
+        </div>
+        <div class="panel-body">
+            @if (departamento.Empleados.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>No. Emp</th>
+                                <th>Nombre Completo</th>
+                                <th>Título</th>
+                                <th class="text-right">Salario</th>
+                                <th>Fecha Contratación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var empleado in departamento.Empleados.OrderBy(e => e.Apellido))
+                            {
+                                <tr>
+                                    <td>@empleado.EmpNo</td>
+                                    <td>@empleado.Nombre @empleado.Apellido</td>
+                                    <td>@empleado.Titulo</td>
+                                    <td class="text-right">@empleado.Salario.ToString("C")</td>
+                                    <td>@empleado.FechaContratacion</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="active">
+                                <th colspan="3">Total Empleados en @departamento.NombreDepartamento:</th>
+                                <th class="text-right">@departamento.Empleados.Sum(e => e.Salario).ToString("C")</th>
+                                <th class="text-right">@departamento.Empleados.Count empleados</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i> No hay empleados activos en este departamento.
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No se encontraron departamentos para mostrar.
+    </div>
+}
