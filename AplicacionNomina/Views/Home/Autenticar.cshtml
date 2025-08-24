@@ -1,118 +1,143 @@
 @{
     ViewBag.Title = "Autenticar";
-    Layout = null;
+    Layout = null; 
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>Login - Aplicaci�n N�mina</title>
-    <link rel="stylesheet" href="~/Content/css/Login.css" />
-    <style>
-        .login-card {
-            background: #fff;
-            padding: 2.5rem 2rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
-            max-width: 400px;
-            margin: 60px auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - Aplicacion Nomina</title>
 
-            .login-card h2 {
-                margin-bottom: 1.5rem;
-                color: #2980b9;
-                font-weight: 700;
-                letter-spacing: 1px;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { brand: "#ff3b4e" } }
             }
-
-            .login-card .input-group {
-                width: 100%;
-                margin-bottom: 1.2rem;
-            }
-
-            .login-card label {
-                display: block;
-                margin-bottom: 0.4rem;
-                color: #34495e;
-                font-size: 1rem;
-            }
-
-            .login-card input {
-                width: 100%;
-                padding: 0.7rem;
-                border: 1px solid #b2bec3;
-                border-radius: 8px;
-                font-size: 1rem;
-                transition: border-color 0.2s;
-            }
-
-                .login-card input:focus {
-                    border-color: #2980b9;
-                    outline: none;
-                }
-
-            .login-card .login-btn {
-                width: 100%;
-                padding: 0.8rem;
-                background: linear-gradient(90deg, #2980b9 60%, #6dd5fa 100%);
-                color: #fff;
-                border: none;
-                border-radius: 8px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: background 0.2s;
-                margin-top: 1rem;
-                box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
-            }
-
-                .login-card .login-btn:hover {
-                    background: linear-gradient(90deg, #2574a9 60%, #60a3bc 100%);
-                }
-
-            .login-card .alert {
-                width: 100%;
-                margin-bottom: 1rem;
-                padding: 0.7rem;
-                border-radius: 6px;
-                background: #ffdddd;
-                color: #c0392b;
-                border: 1px solid #e74c3c;
-                text-align: center;
-            }
-
-        body {
-            background: linear-gradient(120deg, #2980b9, #6dd5fa, #ffffff);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-        }
-    </style>
+        };
+    </script>
 </head>
-<body>
-    <div class="login-card">
-        <h2>Iniciar sesi�n</h2>
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert">@ViewBag.Error</div>
-        }
-        @using (Html.BeginForm("Autenticar", "Home", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            <div class="input-group">
-                <label for="Usuario">Usuario</label>
-                <input type="text" id="Usuario" name="Usuario" required autocomplete="username" />
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-900">
+
+    <main class="max-w-6xl mx-auto min-h-screen grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-6 lg:p-10">
+
+        <div class="rounded-3xl h-72 lg:h-[520px] shadow-2xl overflow-hidden relative">
+            <div class="absolute inset-0 bg-[radial-gradient(1000px_600px_at_20%_15%,rgba(255,77,87,.45),transparent_60%)]"></div>
+            <img src="@Url.Content("~/Content/img/img_1.jpeg")"
+                 class="w-full h-full object-cover opacity-70"
+                 alt="Ilustracion de acceso" />
+            <div class="w-full h-full bg-gradient-to-tr from-rose-500/30 via-rose-400/10 to-transparent"></div>
+        </div>
+
+
+        <section class="bg-white rounded-2xl shadow-2xl p-8 lg:p-10 max-w-md w-full mx-auto">
+            <h3 class="text-center text-slate-500 font-semibold">Bienvenido</h3>
+            <h2 class="text-center font-black text-4xl tracking-tight mb-2">ISTER Nomina</h2>
+            <p class="text-center text-slate-500 mb-6">Inicia sesion para continuar</p>
+
+            <div class="space-y-3">
+                <a class="w-full inline-flex items-center justify-center gap-2 border border-slate-200 rounded-xl px-4 py-3 bg-white hover:bg-slate-50 transition"
+                   href="javascript:void(0)"
+                   aria-label="Iniciar sesion con Google">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_48dp.png"
+                         class="w-5 h-5"
+                         alt="" />
+                    <span class="font-semibold text-slate-800">Entrar con Google</span>
+                </a>
             </div>
-            <div class="input-group">
-                <label for="Clave">Contrase�a</label>
-                <input type="password" id="Clave" name="Clave" required autocomplete="current-password" />
+
+            <!-- Divider -->
+            <div class="flex items-center gap-3 my-6 text-slate-400 font-semibold">
+                <div class="h-px bg-slate-200 flex-1"></div>
+                <span>o continua con</span>
+                <div class="h-px bg-slate-200 flex-1"></div>
             </div>
-            <button type="submit" class="login-btn">Entrar</button>
-        }
-    </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3 text-sm">
+                    @ViewBag.Error
+                </div>
+            }
+
+            @using (Html.BeginForm("Autenticar", "Home", FormMethod.Post, new { autocomplete = "on" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-4">
+                    <label for="Usuario" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                    <input id="Usuario"
+                           name="Usuario"
+                           type="email"
+                           autofocus
+                           class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400
+                                  focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
+                           required
+                           autocomplete="username" />
+                </div>
+
+                <div class="mb-2">
+                    <div class="flex items-center justify-between">
+                        <label for="Clave" class="block text-sm font-medium text-slate-700">Contrasena</label>
+                        <small>
+                            @Html.ActionLink("Olvidaste tu contrasena", "Recuperar", "Home", null, new { @class = "text-slate-500 hover:text-slate-700" })
+                        </small>
+                    </div>
+
+                    <div class="relative mt-1">
+                        <input id="Clave"
+                               name="Clave"
+                               type="password"
+                               class="block w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-slate-900
+                                      focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
+                               required
+                               autocomplete="current-password" />
+
+                        <button id="togglePwd"
+                                type="button"
+                                class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700"
+                                aria-label="Mostrar u ocultar contrasena">
+                            
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recordarme (opcional) -->
+                <div class="mt-2 mb-4 flex items-center gap-2">
+                    <input id="Remember"
+                           name="Remember"
+                           type="checkbox"
+                           class="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
+                    <label for="Remember" class="text-sm text-slate-600">Recordarme en este equipo</label>
+                </div>
+
+                <!-- Botón -->
+                <div>
+                    <button type="submit"
+                            class="w-full rounded-xl bg-brand hover:bg-[#e83547] text-white font-semibold py-3 shadow-lg shadow-rose-500/25 transition">
+                        Iniciar sesion
+                    </button>
+                </div>
+            }
+
+            <p class="text-center text-slate-500 mt-4 text-sm">
+                No tienes una cuenta
+                @Html.ActionLink("Registrate", "Registrar", "Home", null, new { @class = "text-slate-800 hover:underline" })
+            </p>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var btn = document.getElementById('togglePwd');
+            var pwd = document.getElementById('Clave');
+            if (btn && pwd) {
+                btn.addEventListener('click', function () {
+                    pwd.type = (pwd.type === 'password') ? 'text' : 'password';
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

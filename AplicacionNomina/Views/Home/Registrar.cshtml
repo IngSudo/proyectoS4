@@ -1,78 +1,129 @@
-﻿@model AplicacionNomina.Models.RegistroVM
-@{
-    ViewBag.Title = "Create your account";
+﻿@{
+    ViewBag.Title = "Sign up";
+    Layout = null; // vista autónoma como el login
 }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crear una cuenta - ISTER NÓMINA</title>
 
-<div class="row" style="min-height:75vh; align-items:center;">
-    <!-- Columna izquierda (ilustración) -->
-    <div class="col-md-6 mb-4">
-        <div style="
-            background: url('/Content/img/registro-bg.jpg') center/cover no-repeat;
-            border-radius:16px; min-height:420px;">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: "#ff3b4e" } } } }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+
+    <main class="max-w-6xl mx-auto min-h-screen grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-6 lg:p-10">
+
+        <div class="rounded-3xl h-72 lg:h-[520px] shadow-2xl overflow-hidden relative">
+            <div class="absolute inset-0 bg-[radial-gradient(1000px_600px_at_20%_15%,rgba(255,77,87,.45),transparent_60%)]"></div>
+            <img src="@Url.Content("~/Content/img/img_1.jpeg")" class="w-full h-full object-cover opacity-70" alt="Imagen de registro">
+            <div class="w-full h-full bg-gradient-to-tr from-rose-500/30 via-rose-400/10 to-transparent"></div>
         </div>
-    </div>
 
-    <!-- Columna derecha (formulario) -->
-    <div class="col-md-6">
-        <div class="card p-4 shadow-sm" style="border-radius:16px; max-width:520px;">
-            <h2 class="text-center mb-1">Welcome to <strong>XMART</strong></h2>
-            <p class="text-center text-muted mb-4">You will need to authenticate to continue working</p>
-            <h4 class="mb-3">Create your account</h4>
 
-            @using (Html.BeginForm("Registro", "Home", FormMethod.Post, new { @class = "mt-2" }))
+        <section class="bg-white rounded-2xl shadow-2xl p-8 lg:p-10 max-w-md w-full mx-auto">
+            <h4 class="text-center text-slate-500 font-semibold">Bienvenido a</h4>
+            <h1 class="text-center font-black text-4xl tracking-tight mb-2">ISTER NÓMINA</h1>
+            <p class="text-center text-slate-500 mb-6">Completa tus datos para crear tu cuenta</p>
+
+            @if (ViewBag.Error != null)
             {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.Nombre)
-                    @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Name" })
-                    @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.Apellido)
-                    @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Lastname" })
-                    @Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.Email)
-                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Email" })
-                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.Clave, "Password")
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Clave, new { @class = "form-control", type = "password", id = "pwd" })
-                        <button type="button" class="btn btn-outline-secondary" id="togglePwd" title="Mostrar/Ocultar">👁</button>
-                    </div>
-                    @Html.ValidationMessageFor(m => m.Clave, "", new { @class = "text-danger" })
-                </div>
-
-                <button class="btn btn-danger w-100 mb-2" type="submit">Create account</button>
-
-                <div class="text-center">
-                    <small>Already have an account?
-                        @Html.ActionLink("Sign in", "Autenticar", "Home")
-                    </small>
+                <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3 text-sm">
+                    @ViewBag.Error
                 </div>
             }
-        </div>
-    </div>
-</div>
 
-@section scripts{
+            @using (Html.BeginForm("Registrar", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="Cedula">Cédula</label>
+                    <input id="Cedula" name="Cedula" inputmode="numeric" pattern="^[0-9\.\-]{6,20}$" placeholder="Ej. 12345678"
+                           class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400
+                        focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" required />
+                    <small class="text-slate-400">Solo números </small>
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" for="Nombre">Nombre</label>
+                        <input id="Nombre" name="Nombre" required
+                               class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900
+                          focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" for="Apellido">Apellido</label>
+                        <input id="Apellido" name="Apellido" required
+                               class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900
+                          focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" />
+                    </div>
+                </div>
+
+
+                <div class="mt-4 mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="Email">Email</label>
+                    <input id="Email" name="Email" type="email" required autocomplete="email"
+                           class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900
+                        focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" />
+                </div>
+
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="FechaNacimiento">Fecha de nacimiento</label>
+                    <input id="FechaNacimiento" name="FechaNacimiento" type="date" required autocomplete="bday"
+                           class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900
+                        focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" />
+                </div>
+
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="Clave">Contraseña</label>
+                    <div class="relative">
+                        <input id="Clave" name="Clave" type="password" required autocomplete="new-password"
+                               minlength="6" placeholder="Mínimo 6 caracteres"
+                               class="block w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-slate-900
+                          focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400" />
+                        <button type="button" id="togglePwd"
+                                class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700"
+                                aria-label="Mostrar u ocultar contraseña">
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="mt-4">
+                    <button type="submit"
+                            class="w-full rounded-xl bg-brand hover:bg-[#e83547] text-white font-semibold py-3 shadow-lg shadow-rose-500/25 transition">
+                        Crear cuenta
+                    </button>
+                </div>
+
+
+                <p class="text-center text-slate-500 mt-4 text-sm">
+                    ¿Ya tienes una cuenta?
+                    @Html.ActionLink("Inicia sesión", "Autenticar", "Home", null, new { @class = "text-slate-800 hover:underline" })
+                </p>
+            }
+        </section>
+    </main>
+
     <script>
         (function () {
             var btn = document.getElementById('togglePwd');
-            var pwd = document.getElementById('pwd');
-            if (btn && pwd) {
-                btn.addEventListener('click', function () {
-                    pwd.type = (pwd.type === 'password') ? 'text' : 'password';
-                });
-            }
+            var pwd = document.getElementById('Clave');
+            if (btn && pwd) btn.addEventListener('click', function () {
+                pwd.type = (pwd.type === 'password') ? 'text' : 'password';
+            });
         })();
     </script>
-}
+</body>
+</html>
